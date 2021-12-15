@@ -1,4 +1,5 @@
 import Router from './lib/router';
+import GamePage from './pages/game-page';
 import NotFoundPage from './pages/not-found-page';
 import { IRoute } from './types/route';
 import { addLoader } from './utils/loader';
@@ -10,7 +11,7 @@ class App {
 
   constructor(target: HTMLElement) {
     this.target = target;
-    this.routes = [];
+    this.routes = [{ path: '/', component: GamePage }];
     this.NotFoundPage = NotFoundPage;
     this.init();
     this.render();
