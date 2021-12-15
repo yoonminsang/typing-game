@@ -1,0 +1,14 @@
+header.header {
+  display: flex;
+  align-items: center;
+  color: var(--primary);
+  width: 100%;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+header.header > h1 {
+  font-weight: 700;
+  font-size: 30px;
+}
