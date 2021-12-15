@@ -129,7 +129,7 @@ class GameContainer extends Component {
   componentDidUpdate(state: IState, nextState: IState): void {
     if (nextState.words && nextState.round === nextState.words.length + 1) {
       const { score, timeArr } = nextState;
-      const average = timeArr.reduce((acc, cur) => acc + cur) / timeArr.length;
+      const average = timeArr.length ? timeArr.reduce((acc, cur) => acc + cur) / timeArr.length : Infinity;
       const history = useHistory();
       sessionStorage.setItem('score', (score as number).toString());
       sessionStorage.setItem('average', average.toString());
