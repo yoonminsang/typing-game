@@ -3,6 +3,9 @@ body {
   --grey: #e3e3e3;
   --darkGrey: #c1c1c1;
   --white: #fcfcfc;
+  --primary: #2ac1bc;
+  --primary-2: #a0e1e0;
+  --primary-3: #219a95;
   line-height: 1.5;
   font-family: 'Noto Sans KR';
 }
@@ -15,20 +18,6 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-}
-
-.wrapper > * {
-  width: 100%;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.flex {
-  display: flex;
   align-items: center;
 }
 
