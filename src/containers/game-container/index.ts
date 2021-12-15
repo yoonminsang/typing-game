@@ -4,6 +4,7 @@ import Input from '@/components/common/input';
 import Component from '@/lib/component';
 import { IWord } from '@/types/words';
 import { getWordsApi } from '@/utils/api/words';
+import { useHistory } from '@/lib/routerHooks';
 import './style.css';
 
 interface IState {
@@ -15,7 +16,8 @@ interface IState {
   message: string;
   text: string;
   second: number | null;
-  answerTimeArr: number[] | null;
+  timer: number | null;
+  timeArr: number[];
   timerId: number | null;
 }
 
@@ -30,13 +32,14 @@ class GameContainer extends Component {
       message: '',
       text: null,
       second: null,
-      answerTimeArr: null,
+      timer: null,
+      timeArr: [],
       timerId: null,
     };
   }
 
   markup() {
-    const { isStart, round, score, message, text, second } = this.state as IState;
+    const { isStart, round, score, message, text, timer } = this.state as IState;
 
     if (!isStart)
       return /* html */ `
@@ -50,7 +53,7 @@ class GameContainer extends Component {
       <form class="form-game">
         <h2>${round} 라운드</h2>
         <div class="flex">
-          <div>남은 시간 : ${second}</div>
+          <div>남은 시간 : ${timer}</div>
           <div>점수 : ${score}</div>
         </div>
         <div class="text">${text}</div>
@@ -93,9 +96,12 @@ class GameContainer extends Component {
     });
     this.addEvent('submit', '.form-game', async (e: Event) => {
       e.preventDefault();
-      const { typing, text } = this.state as IState;
+      const { typing, text, timeArr, second, timer, timerId, round } = this.state as IState;
       if (typing === text) {
-        // TODO: 같은경우처리
+        clearInterval(timerId as number);
+        const nextAnswerTimerArr = [...(timeArr as number[]), (second as number) - (timer as number)];
+        this.setState({ timeArr: nextAnswerTimerArr, round: (round as number) + 1 });
+        (this.target.querySelector('.input-typing') as HTMLInputElement).value = '';
       } else {
         this.setState({ message: '틀렸어요!! 다시 시도해주세요' });
       }
@@ -113,11 +119,38 @@ class GameContainer extends Component {
   }
 
   componentDidUpdate(state: IState, nextState: IState): void {
-    if (nextState.isStart && state.round !== nextState.round) {
+    if (nextState.words && nextState.round === nextState.words.length + 1) {
+      const { score, timeArr } = nextState;
+      const average = timeArr.reduce((acc, cur) => acc + cur) / timeArr.length;
+      const history = useHistory();
+      history.push(`/complete?score=${score}&average=${average}`);
+    } else if (state.round !== nextState.round) {
       const { text, second } = (nextState.words as IWord[])[(nextState.round as number) - 1];
-      this.setState({ text, second });
+      this.initialization(text, second);
     }
-    // TODO: 타이머
+  }
+
+  initialization(text: string, second: number) {
+    this.setState(
+      { typing: '', message: '', text, second, timer: second, timerId: setInterval(() => this.countDown(), 1000) },
+      () => this.initializeInput(),
+    );
+  }
+
+  initializeInput() {
+    setTimeout(() => {
+      (this.target.querySelector('.input-typing') as HTMLInputElement).value = '';
+    });
+  }
+
+  async countDown() {
+    const { timer, timerId, round, score } = this.state as IState;
+    if (timer === 0) {
+      clearInterval(timerId as number);
+      this.setState({ round: (round as number) + 1, score: (score as number) - 1 });
+    } else {
+      this.setState({ timer: (timer as number) - 1 });
+    }
   }
 
   async getWords() {
@@ -127,7 +160,7 @@ class GameContainer extends Component {
     } catch (err) {
       if (axios.isAxiosError(err)) {
         // eslint-disable-next-line no-alert
-        alert('데이터를 불러올 수 없습니다. 조금만 기다려주세요');
+        alert('데이터를 불러올 수 없습니다. 잠시 후에 시도해주세요');
       }
       console.error(err);
     }
