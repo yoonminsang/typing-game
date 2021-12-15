@@ -44,11 +44,23 @@
 
 @media all and (max-width: 480px) {
   .game {
+    width: 100%;
+    padding: 0 5%;
+  }
+  .game h2 {
+    font-size: 18px;
+    margin-bottom: 18px;
+  }
+
+  .game .text {
+    font-size: 30px;
   }
 }
 
 @media all and (min-width: 480px) and (max-width: 1200px) {
   .game {
+    width: 100%;
+    padding: 0 10%;
   }
 }
 
