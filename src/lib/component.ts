@@ -2,13 +2,9 @@
 
 import { TState } from './types';
 
-interface IProps {
-  [index: string]: string;
-}
-
 abstract class Component {
   target: HTMLElement;
-  props: IProps;
+  props: TState;
   inside: boolean | undefined;
   state: any;
 
@@ -37,7 +33,7 @@ abstract class Component {
 
   private addClass() {
     const el = this.target.firstElementChild;
-    const classArr = this.props.class.split(' ');
+    const classArr: string[] = this.props.class.split(' ');
     if (el) {
       classArr.forEach((className) => {
         el.classList.add(className);
@@ -55,7 +51,7 @@ abstract class Component {
 
   public componentDidMount() {}
 
-  public componentDidUpdate(_state: TState, _nextState: TState) {}
+  public componentDidUpdate(state: TState, nextState: TState) {}
 
   public markup() {
     return '';
