@@ -1,7 +1,6 @@
 import Router from './lib/router';
 import NotFoundPage from './pages/not-found-page';
 import { IRoute } from './types/route';
-import { getWords } from './utils/api/words';
 import { addLoader } from './utils/loader';
 
 class App {
