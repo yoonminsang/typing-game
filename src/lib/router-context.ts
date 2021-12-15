@@ -1,17 +1,8 @@
+import { IRouterState } from './types';
 import { getPathname, getQuery } from './utils';
 
-type TState = Record<string, any>;
-
-interface IState {
-  pathname: string;
-  query: TState;
-  params: TState;
-  push: (pathname: string) => void;
-  goBack: () => void;
-}
-
 class RouterContext {
-  state: IState;
+  state: IRouterState;
 
   constructor() {
     this.state = { pathname: getPathname(), query: getQuery(), params: {}, push: () => {}, goBack: () => {} };

@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { TState } from './types';
+import { IRouterState, TState } from './types';
 
 abstract class Component {
   target: HTMLElement;
   props: TState;
   inside: boolean | undefined;
   state: any;
+  history: IRouterState | undefined;
 
   constructor(target: HTMLElement, props = {}) {
     this.target = target;
