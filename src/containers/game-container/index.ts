@@ -118,12 +118,22 @@ class GameContainer extends Component {
     });
   }
 
+  componentDidMount() {
+    const again = sessionStorage.getItem('again');
+    if (again) {
+      this.getWords();
+      sessionStorage.removeItem('again');
+    }
+  }
+
   componentDidUpdate(state: IState, nextState: IState): void {
     if (nextState.words && nextState.round === nextState.words.length + 1) {
       const { score, timeArr } = nextState;
       const average = timeArr.reduce((acc, cur) => acc + cur) / timeArr.length;
       const history = useHistory();
-      history.push(`/complete?score=${score}&average=${average}`);
+      sessionStorage.setItem('score', (score as number).toString());
+      sessionStorage.setItem('average', average.toString());
+      history.push('/complete');
     } else if (state.round !== nextState.round) {
       const { text, second } = (nextState.words as IWord[])[(nextState.round as number) - 1];
       this.initialization(text, second);

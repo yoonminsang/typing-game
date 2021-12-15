@@ -13,6 +13,8 @@ class Complete extends Component {
     if (!score || !average) {
       this.history?.push('/');
     }
+    sessionStorage.removeItem('score');
+    sessionStorage.removeItem('average');
     return /* html */ `
     <main class="complete">
       <h2>Mission Complete!</h2>
