@@ -92,7 +92,9 @@ class GameContainer extends Component {
       this.getWords();
     });
     this.addEvent('click', '.js-btn-initial', () => {
+      const { timerId } = this.state as IState;
       this.setState({ isStart: false });
+      clearInterval(timerId as number);
     });
     this.addEvent('submit', '.form-game', async (e: Event) => {
       e.preventDefault();
