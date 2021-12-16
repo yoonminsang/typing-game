@@ -1,11 +1,9 @@
 import axios from 'axios';
-import Button from '@/components/common/button';
-import Input from '@/components/common/input';
 import Component from '@/lib/component';
 import { IWord } from '@/types/words';
 import { getWordsApi } from '@/utils/api/words';
 import { useHistory } from '@/lib/routerHooks';
-import './style.css';
+import Game from '@/components/game';
 
 interface IState {
   isStart: boolean;
@@ -39,52 +37,15 @@ class GameContainer extends Component {
   }
 
   markup() {
-    const { isStart, round, score, message, text, timer } = this.state as IState;
-
-    if (!isStart)
-      return /* html */ `
-      <main class="game">
-        <div class="button-start-inside"></div>
-      </main class="game">
-    `;
-
     return /* html */ `
-    <main class="game">
-      <form class="form-game">
-        <h2>${round} 라운드</h2>
-        <div class="flex">
-          <div>남은 시간 : ${timer}</div>
-          <div>점수 : ${score}</div>
-        </div>
-        <div class="text">${text}</div>
-        <inside class="input-inside"></inside>
-        <div class="error">${message}</div>
-        <inside class="button-initial-inside"></inside>
-      </form>
-    </main>
+    <inside class="game-inside"></inside>
     `;
   }
 
   appendComponent(target: HTMLElement | DocumentFragment) {
-    const { isStart, typing } = this.state as IState;
-    const btnText = isStart ? '초기화' : '시작';
-
-    const $input = target.querySelector('.input-inside') as HTMLInputElement;
-    const $startButton = target.querySelector('.button-start-inside') as HTMLElement;
-    const $initialButton = target.querySelector('.button-initial-inside') as HTMLElement;
-
-    if (isStart) {
-      new Input($input, {
-        placeholder: '위의 단어를 입력하세요',
-        required: true,
-        value: typing,
-        class: 'input-typing',
-        type: 'text',
-      });
-      new Button($initialButton, { text: btnText, class: 'js-btn-initial' });
-    } else {
-      new Button($startButton, { text: btnText, class: 'js-btn-start' });
-    }
+    const { isStart, round, score, message, text, timer, typing } = this.state as IState;
+    const $game = target.querySelector('.game-inside') as HTMLElement;
+    new Game($game, { isStart, round, score, message, text, timer, typing });
   }
 
   setEvent() {
@@ -103,7 +64,8 @@ class GameContainer extends Component {
         clearInterval(timerId as number);
         const nextAnswerTimerArr = [...(timeArr as number[]), (second as number) - (timer as number)];
         this.setState({ timeArr: nextAnswerTimerArr, round: (round as number) + 1 });
-        (this.target.querySelector('.input-typing') as HTMLInputElement).value = '';
+        // (this.target.querySelector('.input-typing') as HTMLInputElement).value = '';
+        this.initializeInput();
       } else {
         this.setState({ message: '틀렸어요!! 다시 시도해주세요' });
       }
