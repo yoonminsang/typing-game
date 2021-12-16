@@ -5,11 +5,11 @@ import './style.css';
 
 class Complete extends Component {
   setup() {
-    const history = useHistory();
+    this.history = useHistory();
     const score = sessionStorage.getItem('score');
     const average = sessionStorage.getItem('average');
     if (!score || !average) {
-      history.push('/');
+      this.history.push('/');
     }
     this.state = { score, average };
     sessionStorage.removeItem('score');
