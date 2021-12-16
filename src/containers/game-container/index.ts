@@ -64,7 +64,6 @@ class GameContainer extends Component {
         clearInterval(timerId as number);
         const nextAnswerTimerArr = [...(timeArr as number[]), (second as number) - (timer as number)];
         this.setState({ timeArr: nextAnswerTimerArr, round: (round as number) + 1 });
-        // (this.target.querySelector('.input-typing') as HTMLInputElement).value = '';
         this.initializeInput();
       } else {
         this.setState({ message: '틀렸어요!! 다시 시도해주세요' });
@@ -117,7 +116,7 @@ class GameContainer extends Component {
     });
   }
 
-  async countDown() {
+  countDown() {
     const { timer, timerId, round, score } = this.state as IState;
     if (timer === 0) {
       clearInterval(timerId as number);

@@ -20,7 +20,7 @@ class Game extends Component {
     if (!isStart)
       return /* html */ `
       <main class="game">
-        <div class="button-start-inside"></div>
+        <inside class="button-start-inside"></inside>
       </main class="game">
     `;
 
