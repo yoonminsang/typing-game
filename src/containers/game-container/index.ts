@@ -100,7 +100,7 @@ class GameContainer extends Component {
       const nextTimeArr = [...timeArr, second - timer];
       this.setState({ timeArr: nextTimeArr, round: round + 1, typing: '' });
     } else {
-      this.setState({ message: GAME_HELP_MESSAGE.wrongSubmit });
+      this.setState({ message: GAME_HELP_MESSAGE.wrongSubmit, typing: '' });
     }
   }
 
