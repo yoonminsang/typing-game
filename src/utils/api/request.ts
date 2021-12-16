@@ -14,7 +14,7 @@ client.defaults.withCredentials = true;
 const requestEvent = new CustomEvent('request');
 const requestEndEvent = new CustomEvent('request-end');
 
-async function request<T>(method: Method, url: string, data?: unknown, multipart?: boolean): Promise<AxiosResponse<T>> {
+async function request(method: Method, url: string, data?: unknown, multipart?: boolean): Promise<AxiosResponse> {
   window.dispatchEvent(requestEvent);
   const multipartOption = multipart && { 'Content-Type': 'multipart/form-data' };
   try {
