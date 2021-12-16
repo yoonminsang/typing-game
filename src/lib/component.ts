@@ -48,7 +48,7 @@ abstract class Component {
     this.target = temp;
   }
 
-  public appendComponent(_newDom: DocumentFragment | HTMLElement) {}
+  public appendComponent(target: DocumentFragment | HTMLElement) {}
 
   public componentDidMount() {}
 
@@ -74,9 +74,7 @@ abstract class Component {
     this.componentDidUpdate({ ...this.state }, { ...this.state, ...nextState });
     this.state = { ...this.state, ...nextState };
     this.update();
-    if (cb) {
-      cb();
-    }
+    cb?.();
   }
 
   private update() {
@@ -132,8 +130,12 @@ abstract class Component {
 
           [...newAttributes].forEach((newAttr) => {
             const currentAttribute = curAttributes.getNamedItem(newAttr.name);
-            if (!currentAttribute || currentAttribute.value !== newAttr.value)
+            if (!currentAttribute || currentAttribute.value !== newAttr.value) {
               curEl.setAttribute(newAttr.name, newAttr.value);
+              if (curEl.nodeName === 'INPUT' && newAttr.name === 'value') {
+                (curEl as HTMLInputElement).value = newAttr.value;
+              }
+            }
           });
         }
       }
