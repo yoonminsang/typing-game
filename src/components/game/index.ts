@@ -5,12 +5,12 @@ import './style.css';
 
 interface IProps {
   isStart: boolean;
-  round: number | null;
-  score: number | null;
+  round: number;
+  score: number;
   typing: string;
   message: string;
   text: string;
-  timer: number | null;
+  timer: number;
 }
 
 class Game extends Component {

@@ -1,14 +1,10 @@
 import { queryByText } from '@testing-library/dom';
 import { IWord } from '@/types/words';
 import GameContainer from '.';
+import { GAME_HELP_MESSAGE } from '@/constants';
 
 const BTN_INITIAL = '초기화';
 const BTN_START = '시작';
-const MESSAGE = {
-  wrongSubmit: '틀렸어요!! 다시 시도해주세요',
-  wrongChange: '주어진 단어와 달라요',
-  correctChange: '엔터 버튼을 눌러주세요',
-};
 
 const mockWords: IWord[] = [
   {
@@ -41,14 +37,14 @@ const renderComplex = () => {
     const { text } = mockWords[0];
     container.setState({ typing: value });
     if (value === text) {
-      container.setState({ message: MESSAGE.correctChange });
+      container.setState({ message: GAME_HELP_MESSAGE.correctChange });
     } else {
-      container.setState({ message: MESSAGE.wrongChange });
+      container.setState({ message: GAME_HELP_MESSAGE.wrongChange });
     }
   };
   const onSubmit = (str: string) => {
     if (str !== mockWords[0].text) {
-      container.setState({ message: MESSAGE.wrongSubmit });
+      container.setState({ message: GAME_HELP_MESSAGE.wrongSubmit });
     }
   };
 
@@ -102,11 +98,11 @@ describe('game-container', () => {
     const { onClickInitialButton, onInput, message, onSubmit } = renderComplex();
     onClickInitialButton();
     onInput('a');
-    expect(message(MESSAGE.wrongChange)).not.toBeNull();
+    expect(message(GAME_HELP_MESSAGE.wrongChange)).not.toBeNull();
     onSubmit('a');
-    expect(message(MESSAGE.wrongSubmit)).not.toBeNull();
+    expect(message(GAME_HELP_MESSAGE.wrongSubmit)).not.toBeNull();
     onInput(mockWords[0].text);
-    expect(message(MESSAGE.correctChange)).not.toBeNull();
+    expect(message(GAME_HELP_MESSAGE.correctChange)).not.toBeNull();
   });
 
   it('snapshot', () => {

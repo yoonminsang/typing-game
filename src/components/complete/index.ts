@@ -5,16 +5,19 @@ import './style.css';
 
 class Complete extends Component {
   setup() {
-    this.history = useHistory();
-  }
-  markup() {
+    const history = useHistory();
     const score = sessionStorage.getItem('score');
     const average = sessionStorage.getItem('average');
     if (!score || !average) {
-      this.history?.push('/');
+      history.push('/');
     }
+    this.state = { score, average };
     sessionStorage.removeItem('score');
     sessionStorage.removeItem('average');
+  }
+
+  markup() {
+    const { score, average } = this.state;
     return /* html */ `
     <main class="complete">
       <h2>Mission Complete!</h2>
