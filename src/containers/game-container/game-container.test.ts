@@ -1,7 +1,10 @@
-import { queryByText } from '@testing-library/dom';
+import { queryByText, fireEvent } from '@testing-library/dom';
+// import userEvent from '@testing-library/user-event';
 import { IWord } from '@/types/words';
 import GameContainer from '.';
 import { GAME_HELP_MESSAGE } from '@/constants';
+
+jest.useFakeTimers();
 
 const BTN_INITIAL = '초기화';
 const BTN_START = '시작';
@@ -21,31 +24,31 @@ const renderComplex = () => {
   const $div = document.createElement('div');
   const container = new GameContainer($div);
   const game = () => $div.querySelector('.game');
+  const form = () => $div.querySelector('form') as HTMLFormElement;
   const initialButton = () => queryByText($div, BTN_INITIAL);
   const startButton = () => queryByText($div, BTN_START);
+
+  // getwords 모킹 바꿀까?? axios 모킹하고 에러도 처리
   const onClickInitialButton = async () => {
     container.setState({ words: mockWords, isStart: true, round: 1, score: mockWords.length });
   };
+
   const round = (num: number) => queryByText($div, `${num} 라운드`);
   const timer = (num: number) => queryByText($div, `남은 시간 : ${num}`);
   const score = (num: number) => queryByText($div, `점수 : ${num}`);
   const text = (str: string) => queryByText($div, str);
   const message = (str: string) => queryByText($div, str);
   const input = () => $div.querySelector('input') as HTMLInputElement;
+
+  // TODO: 왜 안될까?? 아얘 input 이벤트가 발생을 안해
   const onInput = (str: string) => {
-    const value = str;
-    const { text } = mockWords[0];
-    container.setState({ typing: value });
-    if (value === text) {
-      container.setState({ message: GAME_HELP_MESSAGE.correctChange });
-    } else {
-      container.setState({ message: GAME_HELP_MESSAGE.wrongChange });
-    }
+    // userEvent.type(input(), str);
+    // fireEvent.change(input(), str);
+    container.onChange(str);
   };
-  const onSubmit = (str: string) => {
-    if (str !== mockWords[0].text) {
-      container.setState({ message: GAME_HELP_MESSAGE.wrongSubmit });
-    }
+
+  const onSubmit = () => {
+    fireEvent.submit(form());
   };
 
   return {
@@ -61,6 +64,7 @@ const renderComplex = () => {
     input,
     onInput,
     onSubmit,
+    form,
   };
 };
 
@@ -94,12 +98,12 @@ describe('game-container', () => {
     expect(input().value).toBe('a');
   });
 
-  it('case message', () => {
+  it('case help message', () => {
     const { onClickInitialButton, onInput, message, onSubmit } = renderComplex();
     onClickInitialButton();
     onInput('a');
     expect(message(GAME_HELP_MESSAGE.wrongChange)).not.toBeNull();
-    onSubmit('a');
+    onSubmit();
     expect(message(GAME_HELP_MESSAGE.wrongSubmit)).not.toBeNull();
     onInput(mockWords[0].text);
     expect(message(GAME_HELP_MESSAGE.correctChange)).not.toBeNull();
