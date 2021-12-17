@@ -15,7 +15,7 @@ const mockWords: IWord[] = [
     text: 'hello',
   },
   {
-    second: 10,
+    second: 5,
     text: 'world',
   },
 ];
@@ -68,6 +68,13 @@ const renderComplex = () => {
   };
 };
 
+beforeEach(() => {
+  window.sessionStorage.clear();
+  jest.restoreAllMocks();
+  jest.spyOn(global, 'setInterval');
+  window.history.pushState(null, '', '/');
+});
+
 describe('game-container', () => {
   it('should render default component', () => {
     const { game, initialButton, startButton } = renderComplex();
@@ -107,6 +114,50 @@ describe('game-container', () => {
     expect(message(GAME_HELP_MESSAGE.wrongSubmit)).not.toBeNull();
     onInput(mockWords[0].text);
     expect(message(GAME_HELP_MESSAGE.correctChange)).not.toBeNull();
+  });
+
+  it('correct submit word', () => {
+    const { onClickInitialButton, onInput, onSubmit, round, score, text, timer } = renderComplex();
+    onClickInitialButton();
+    onInput(mockWords[0].text);
+    onSubmit();
+    expect(round(2)).not.toBeNull();
+    expect(score(mockWords.length)).not.toBeNull();
+    expect(timer(mockWords[1].second)).not.toBeNull();
+    expect(text(mockWords[1].text)).not.toBeNull();
+  });
+
+  it('submit success and next round', () => {
+    const { onClickInitialButton, onInput, onSubmit, round, score, text, timer, message } = renderComplex();
+    onClickInitialButton();
+    onInput(mockWords[0].text);
+    onSubmit();
+    expect(round(2)).not.toBeNull();
+    expect(score(mockWords.length)).not.toBeNull();
+    expect(timer(mockWords[1].second)).not.toBeNull();
+    expect(text(mockWords[1].text)).not.toBeNull();
+    expect(message(GAME_HELP_MESSAGE.correctChange)).toBeNull();
+  });
+
+  it('score 1 average 1 game end', () => {
+    const { onClickInitialButton, onInput, onSubmit } = renderComplex();
+    onClickInitialButton();
+    jest.advanceTimersByTime(1000);
+    onInput(mockWords[0].text);
+    onSubmit();
+    jest.advanceTimersByTime(6000);
+    expect(sessionStorage.getItem('score')).toBe('1');
+    expect(sessionStorage.getItem('average')).toBe('1');
+    expect(window.location.pathname).toBe('/complete');
+  });
+
+  it('score 0 game end', () => {
+    const { onClickInitialButton } = renderComplex();
+    onClickInitialButton();
+    jest.runAllTimers();
+    expect(sessionStorage.getItem('score')).toBe('0');
+    expect(sessionStorage.getItem('average')).toBe('Infinity');
+    expect(window.location.pathname).toBe('/complete');
   });
 
   it('snapshot', () => {
