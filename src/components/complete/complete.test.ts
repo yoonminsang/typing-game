@@ -23,6 +23,10 @@ const renderSessionEmpty = () => {
   return $div;
 };
 
+beforeEach(() => {
+  window.history.pushState(null, '', '/complete');
+});
+
 describe('complete', () => {
   it('should render default component', () => {
     const { complete, score, average, button } = renderComplex();
@@ -33,15 +37,11 @@ describe('complete', () => {
   });
 
   it('should prevent when session empty', () => {
-    window.history.pushState(null, '', '/complete');
-    expect(window.location.pathname).toBe('/complete');
     renderSessionEmpty();
     expect(window.location.pathname).toBe('/');
   });
 
   it('should click button', () => {
-    window.history.pushState(null, '', '/complete');
-    expect(window.location.pathname).toBe('/complete');
     const { onClick } = renderComplex();
     onClick();
     expect(sessionStorage.getItem('again')).toBe('true');
