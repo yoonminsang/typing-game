@@ -60,7 +60,7 @@ abstract class Component {
 
   public setEvent() {}
 
-  public addEvent(eventType: string, selector: string, callback: Function) {
+  public addEvent(eventType: keyof DocumentEventMap, selector: string, callback: Function) {
     const children = [...this.target.querySelectorAll(selector)] as HTMLElement[];
     const isTarget = (target: HTMLElement) => children.includes(target) || target.closest(selector);
     this.target.addEventListener(eventType, (e) => {
