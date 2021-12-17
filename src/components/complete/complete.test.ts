@@ -11,7 +11,9 @@ const renderComplex = () => {
   const score = () => getByText($div, '1점');
   const average = () => getByText($div, '2초');
   const button = () => getByText($div, '다시 시작');
-  const onClick = () => userEvent.click(button());
+  const onClick = () => {
+    userEvent.click(button());
+  };
   return { complete, score, average, button, onClick };
 };
 

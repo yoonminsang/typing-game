@@ -60,10 +60,11 @@ class GameContainer extends Component {
       clearInterval(timerId);
     });
     this.addEvent('submit', '.form-game', async (e: Event) => {
-      this.onSubmit(e);
+      e.preventDefault();
+      this.onSubmit();
     });
     this.addEvent('input', '.input-typing', (e: Event) => {
-      this.onChange(e);
+      this.onChange((e.target as HTMLInputElement).value);
     });
   }
 
@@ -92,8 +93,7 @@ class GameContainer extends Component {
     this.history?.push('/complete');
   }
 
-  onSubmit(e: Event) {
-    e.preventDefault();
+  onSubmit() {
     const { typing, text, timeArr, second, timer, timerId, round } = this.state as IState;
     if (typing === text) {
       clearInterval(timerId);
@@ -104,8 +104,7 @@ class GameContainer extends Component {
     }
   }
 
-  onChange(e: Event) {
-    const { value } = e.target as HTMLInputElement;
+  onChange(value: string) {
     const { text } = this.state as IState;
     this.setState({ typing: value });
     if (value === text) {
