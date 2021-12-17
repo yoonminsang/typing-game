@@ -1,10 +1,10 @@
+import MockAdapter from 'axios-mock-adapter';
 import { queryByText, fireEvent } from '@testing-library/dom';
 // import userEvent from '@testing-library/user-event';
+import axiosInstance from '@/utils/api/axios-instance';
 import { IWord } from '@/types/words';
 import GameContainer from '.';
-import { GAME_HELP_MESSAGE } from '@/constants';
-
-jest.useFakeTimers();
+import { AXIOS_ERROR, GAME_HELP_MESSAGE } from '@/constants';
 
 const BTN_INITIAL = '초기화';
 const BTN_START = '시작';
@@ -20,17 +20,29 @@ const mockWords: IWord[] = [
   },
 ];
 
+const mock = new MockAdapter(axiosInstance, { onNoMatch: 'throwException' });
+
 const renderComplex = () => {
   const $div = document.createElement('div');
   const container = new GameContainer($div);
   const game = () => $div.querySelector('.game');
   const form = () => $div.querySelector('form') as HTMLFormElement;
-  const initialButton = () => queryByText($div, BTN_INITIAL);
-  const startButton = () => queryByText($div, BTN_START);
+  const initialButton = () => queryByText($div, BTN_INITIAL) as HTMLElement;
+  const startButton = () => queryByText($div, BTN_START) as HTMLElement;
 
-  // getwords 모킹 바꿀까?? axios 모킹하고 에러도 처리
-  const onClickInitialButton = async () => {
-    container.setState({ words: mockWords, isStart: true, round: 1, score: mockWords.length });
+  // TODO
+  const onClickStartButton = async () => {
+    mock.onGet('kakaopay-fe/resources/words').reply(200, mockWords);
+    // fireEvent.click(initialButton());
+    // userEvent.click(startButton());
+    await container.getWords();
+  };
+
+  const onClickStartButtonFail = async () => {
+    mock.onGet('kakaopay-fe/resources/words').reply(500);
+    // fireEvent.click(initialButton());
+    // userEvent.click(startButton());
+    await container.getWords();
   };
 
   const round = (num: number) => queryByText($div, `${num} 라운드`);
@@ -40,7 +52,7 @@ const renderComplex = () => {
   const message = (str: string) => queryByText($div, str);
   const input = () => $div.querySelector('input') as HTMLInputElement;
 
-  // TODO: 왜 안될까?? 아얘 input 이벤트가 발생을 안해
+  // TODO
   const onInput = (str: string) => {
     // userEvent.type(input(), str);
     // fireEvent.change(input(), str);
@@ -55,7 +67,8 @@ const renderComplex = () => {
     game,
     initialButton,
     startButton,
-    onClickInitialButton,
+    onClickStartButton,
+    onClickStartButtonFail,
     round,
     timer,
     score,
@@ -68,11 +81,16 @@ const renderComplex = () => {
   };
 };
 
+beforeAll(() => {
+  jest.useFakeTimers();
+});
+
 beforeEach(() => {
-  window.sessionStorage.clear();
   jest.restoreAllMocks();
-  jest.spyOn(global, 'setInterval');
+  jest.spyOn(window, 'setInterval');
+  window.sessionStorage.clear();
   window.history.pushState(null, '', '/');
+  mock.reset();
 });
 
 describe('game-container', () => {
@@ -83,12 +101,12 @@ describe('game-container', () => {
     expect(initialButton()).toBeNull();
   });
 
-  it('should render component when start', () => {
-    const { game, initialButton, startButton, onClickInitialButton, round, timer, score, text } = renderComplex();
+  it('should render component when start', async () => {
+    const { game, initialButton, startButton, onClickStartButton, round, timer, score, text } = renderComplex();
     expect(game()).not.toBeNull();
     expect(startButton()).not.toBeNull();
     expect(initialButton()).toBeNull();
-    onClickInitialButton();
+    await onClickStartButton();
     expect(game()).not.toBeNull();
     expect(startButton()).toBeNull();
     expect(initialButton()).not.toBeNull();
@@ -98,16 +116,23 @@ describe('game-container', () => {
     expect(text(mockWords[0].text)).not.toBeNull();
   });
 
-  it('should update onchange(input)', () => {
-    const { onClickInitialButton, input, onInput } = renderComplex();
-    onClickInitialButton();
+  it('fail axios', async () => {
+    jest.spyOn(window, 'alert').mockImplementation(() => {});
+    const { onClickStartButtonFail } = renderComplex();
+    await onClickStartButtonFail();
+    expect(window.alert).toBeCalledWith(AXIOS_ERROR);
+  });
+
+  it('should update onchange(input)', async () => {
+    const { onClickStartButton, input, onInput } = renderComplex();
+    await onClickStartButton();
     onInput('a');
     expect(input().value).toBe('a');
   });
 
-  it('case help message', () => {
-    const { onClickInitialButton, onInput, message, onSubmit } = renderComplex();
-    onClickInitialButton();
+  it('case help message', async () => {
+    const { onClickStartButton, onInput, message, onSubmit } = renderComplex();
+    await onClickStartButton();
     onInput('a');
     expect(message(GAME_HELP_MESSAGE.wrongChange)).not.toBeNull();
     onSubmit();
@@ -116,9 +141,9 @@ describe('game-container', () => {
     expect(message(GAME_HELP_MESSAGE.correctChange)).not.toBeNull();
   });
 
-  it('correct submit word', () => {
-    const { onClickInitialButton, onInput, onSubmit, round, score, text, timer } = renderComplex();
-    onClickInitialButton();
+  it('correct submit word', async () => {
+    const { onClickStartButton, onInput, onSubmit, round, score, text, timer } = renderComplex();
+    await onClickStartButton();
     onInput(mockWords[0].text);
     onSubmit();
     expect(round(2)).not.toBeNull();
@@ -127,9 +152,9 @@ describe('game-container', () => {
     expect(text(mockWords[1].text)).not.toBeNull();
   });
 
-  it('submit success and next round', () => {
-    const { onClickInitialButton, onInput, onSubmit, round, score, text, timer, message } = renderComplex();
-    onClickInitialButton();
+  it('submit success and next round', async () => {
+    const { onClickStartButton, onInput, onSubmit, round, score, text, timer, message } = renderComplex();
+    await onClickStartButton();
     onInput(mockWords[0].text);
     onSubmit();
     expect(round(2)).not.toBeNull();
@@ -139,9 +164,23 @@ describe('game-container', () => {
     expect(message(GAME_HELP_MESSAGE.correctChange)).toBeNull();
   });
 
-  it('score 1 average 1 game end', () => {
-    const { onClickInitialButton, onInput, onSubmit } = renderComplex();
-    onClickInitialButton();
+  it('score 2 average 1.5 game end', async () => {
+    const { onClickStartButton, onInput, onSubmit } = renderComplex();
+    await onClickStartButton();
+    jest.advanceTimersByTime(1000);
+    onInput(mockWords[0].text);
+    onSubmit();
+    jest.advanceTimersByTime(2000);
+    onInput(mockWords[1].text);
+    onSubmit();
+    expect(sessionStorage.getItem('score')).toBe('2');
+    expect(sessionStorage.getItem('average')).toBe('1.5');
+    expect(window.location.pathname).toBe('/complete');
+  });
+
+  it('score 1 average 1 game end', async () => {
+    const { onClickStartButton, onInput, onSubmit } = renderComplex();
+    await onClickStartButton();
     jest.advanceTimersByTime(1000);
     onInput(mockWords[0].text);
     onSubmit();
@@ -151,19 +190,19 @@ describe('game-container', () => {
     expect(window.location.pathname).toBe('/complete');
   });
 
-  it('score 0 game end', () => {
-    const { onClickInitialButton } = renderComplex();
-    onClickInitialButton();
+  it('score 0 game end', async () => {
+    const { onClickStartButton } = renderComplex();
+    await onClickStartButton();
     jest.runAllTimers();
     expect(sessionStorage.getItem('score')).toBe('0');
     expect(sessionStorage.getItem('average')).toBe('Infinity');
     expect(window.location.pathname).toBe('/complete');
   });
 
-  it('snapshot', () => {
-    const { game, onClickInitialButton } = renderComplex();
+  it('snapshot', async () => {
+    const { game, onClickStartButton } = renderComplex();
     expect(game()).toMatchSnapshot();
-    onClickInitialButton();
+    await onClickStartButton();
     expect(game()).toMatchSnapshot();
   });
 });
