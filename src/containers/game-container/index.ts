@@ -127,7 +127,7 @@ class GameContainer extends Component {
 
   countDown() {
     const { timer, timerId, round, score } = this.state as IState;
-    if (timer === 0) {
+    if (timer === 1) {
       clearInterval(timerId);
       this.setState({ round: round + 1, score: score - 1 });
     } else {
