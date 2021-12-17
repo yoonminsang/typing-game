@@ -4,17 +4,16 @@ import Loader from '@/components/loader';
 
 let requestCount = 0;
 
-export const addLoader = () => {
-  const $loader = document.querySelector('#loader') as HTMLElement;
-  new Loader($loader);
+export const addLoader = (target: HTMLElement) => {
+  new Loader(target);
 
   window.addEventListener('request', () => {
     requestCount++;
-    $loader.classList.add('show');
+    target.classList.add('show');
   });
 
   window.addEventListener('request-end', () => {
     requestCount--;
-    if (requestCount === 0) $loader.classList.remove('show');
+    if (requestCount === 0) target.classList.remove('show');
   });
 };

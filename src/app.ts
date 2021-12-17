@@ -7,11 +7,13 @@ import { addLoader } from './utils/loader';
 
 class App {
   target: HTMLElement;
+  loaderTarget: HTMLElement;
   routes: IRoute[];
   NotFoundPage: any;
 
-  constructor(target: HTMLElement) {
+  constructor(target: HTMLElement, loaderTarget: HTMLElement) {
     this.target = target;
+    this.loaderTarget = loaderTarget;
     this.routes = [
       { path: '/', component: GamePage },
       { path: '/complete', component: CompletePage },
@@ -22,7 +24,7 @@ class App {
   }
 
   init() {
-    addLoader();
+    addLoader(this.loaderTarget);
   }
 
   render() {
