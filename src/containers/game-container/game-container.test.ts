@@ -33,16 +33,20 @@ const renderComplex = () => {
   // TODO
   const onClickStartButton = async () => {
     mock.onGet('kakaopay-fe/resources/words').reply(200, mockWords);
-    // fireEvent.click(initialButton());
+    // fireEvent.click(startButton());
     // userEvent.click(startButton());
     await container.getWords();
   };
 
   const onClickStartButtonFail = async () => {
     mock.onGet('kakaopay-fe/resources/words').reply(500);
-    // fireEvent.click(initialButton());
+    // fireEvent.click(startButton());
     // userEvent.click(startButton());
     await container.getWords();
+  };
+
+  const onClickInitialButton = () => {
+    fireEvent.click(initialButton());
   };
 
   const round = (num: number) => queryByText($div, `${num} 라운드`);
@@ -69,6 +73,7 @@ const renderComplex = () => {
     startButton,
     onClickStartButton,
     onClickStartButtonFail,
+    onClickInitialButton,
     round,
     timer,
     score,
@@ -121,6 +126,18 @@ describe('game-container', () => {
     const { onClickStartButtonFail } = renderComplex();
     await onClickStartButtonFail();
     expect(window.alert).toBeCalledWith(AXIOS_ERROR);
+  });
+
+  it('click initial button, should render default component', async () => {
+    const { onClickStartButton, onClickInitialButton, initialButton, startButton } = renderComplex();
+    expect(startButton()).not.toBeNull();
+    expect(initialButton()).toBeNull();
+    await onClickStartButton();
+    expect(startButton()).toBeNull();
+    expect(initialButton()).not.toBeNull();
+    onClickInitialButton();
+    expect(startButton()).not.toBeNull();
+    expect(initialButton()).toBeNull();
   });
 
   it('should update onchange(input)', async () => {
@@ -184,7 +201,7 @@ describe('game-container', () => {
     jest.advanceTimersByTime(1000);
     onInput(mockWords[0].text);
     onSubmit();
-    jest.advanceTimersByTime(6000);
+    jest.advanceTimersByTime(5000);
     expect(sessionStorage.getItem('score')).toBe('1');
     expect(sessionStorage.getItem('average')).toBe('1');
     expect(window.location.pathname).toBe('/complete');
