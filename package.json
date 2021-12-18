@@ -9,7 +9,7 @@
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx --parser-options=project:'./tsconfig.json'",
     "test": "jest --config ./jest.config.js",
     "test-clean": "jest --config ./jest.config.js --silent",
-    "test-coverage": "jest --config ./jest.config.js --coverage"
+    "test-coverage": "jest --config ./jest.config.js --coverage --silent"
   },
   "dependencies": {
     "axios": "^0.24.0"
@@ -39,6 +39,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "2.25.2",
     "eslint-plugin-prettier": "^4.0.0",
+    "flush-promises": "^1.0.2",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.4.5",
