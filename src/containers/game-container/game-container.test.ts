@@ -156,6 +156,13 @@ describe('game-container', () => {
     expect(initialButton()).not.toBeInTheDocument();
   });
 
+  it('should focus, after onclick start', async () => {
+    const { onClickStartButton, input } = renderComplex();
+    onClickStartButton();
+    await flushPromises();
+    expect(document.activeElement).toEqual(input());
+  });
+
   it('should update onchange(input)', async () => {
     const { onClickStartButton, input, onInput } = renderComplex();
     onClickStartButton();

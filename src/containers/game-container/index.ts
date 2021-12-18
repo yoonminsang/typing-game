@@ -138,7 +138,7 @@ class GameContainer extends Component {
   async getWords() {
     try {
       const { data: words } = await getWordsApi();
-      this.setState({ words, isStart: true, round: 1, score: words.length });
+      this.setState({ words, isStart: true, round: 1, score: words.length }, () => this.onFocus());
     } catch (err) {
       if (axios.isAxiosError(err)) {
         // eslint-disable-next-line no-alert
@@ -146,6 +146,11 @@ class GameContainer extends Component {
       }
       console.error(err);
     }
+  }
+
+  onFocus() {
+    const input = this.target.querySelector('.input-typing') as HTMLInputElement;
+    input.focus();
   }
 }
 
