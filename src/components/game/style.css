@@ -21,8 +21,9 @@
 
 .game .flex {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   width: 100%;
+  max-width: 500px;
 }
 
 .game .text {
@@ -47,15 +48,10 @@
     width: 100%;
     padding: 0 5%;
   }
-  .game .flex {
-    width: 250px;
-    justify-content: space-between;
-  }
   .game h2 {
     font-size: 18px;
     margin-bottom: 18px;
   }
-
   .game .text {
     font-size: 30px;
   }
