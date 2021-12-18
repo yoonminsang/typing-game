@@ -9,7 +9,7 @@ abstract class Observable {
     this.state = {};
   }
 
-  public setState(nextState: object, cb?: Function) {
+  public setState(nextState: TState, cb?: Function) {
     this.state = { ...this.state, ...nextState };
     this.notify();
     if (cb) {

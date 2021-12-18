@@ -14,7 +14,7 @@ const getQuery = () => {
   return params;
 };
 
-const pathValidation = (currentPath: any[], routePath: any[]) => {
+const pathValidation = (currentPath: string[], routePath: string[]) => {
   if (currentPath.length !== routePath.length) return false;
   const params: TParams = {};
   let index = 0;

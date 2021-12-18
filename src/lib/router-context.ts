@@ -1,4 +1,4 @@
-import { IRouterState } from './types';
+import { IRouterState, TState } from './types';
 import { getPathname, getQuery } from './utils';
 
 class RouterContext {
@@ -16,7 +16,7 @@ class RouterContext {
     };
   }
 
-  public setState(nextState: object) {
+  public setState(nextState: TState) {
     this.state = { ...this.state, ...nextState };
   }
 }

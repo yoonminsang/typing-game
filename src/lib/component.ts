@@ -6,7 +6,7 @@ abstract class Component {
   target: HTMLElement;
   props: TState;
   inside: boolean | undefined;
-  state: any;
+  state!: TState;
   history: IRouterState | undefined;
 
   constructor(target: HTMLElement, props = {}) {
