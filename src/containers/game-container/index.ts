@@ -76,8 +76,7 @@ class GameContainer extends Component {
     }
   }
 
-  componentDidUpdate(state: IState, nextState: IState): void {
-    // console.log(state.round, state.second, nextState.round, nextState.second);
+  componentDidUpdate(state: IState, nextState: IState) {
     if (nextState.round === nextState.words.length + 1) {
       this.gameEnd(nextState);
     } else if (state.round !== nextState.round) {
