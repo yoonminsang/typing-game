@@ -9,16 +9,12 @@ type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 const requestEvent = new CustomEvent('request');
 const requestEndEvent = new CustomEvent('request-end');
 
-async function request(method: Method, url: string, data?: unknown, multipart?: boolean): Promise<AxiosResponse> {
+async function request(method: Method, url: string, data?: unknown): Promise<AxiosResponse> {
   window.dispatchEvent(requestEvent);
-  const multipartOption = multipart && { 'Content-Type': 'multipart/form-data' };
   try {
     const res = await axiosInstance({
       method,
       url,
-      headers: {
-        ...multipartOption,
-      },
       data,
     });
     return res;
