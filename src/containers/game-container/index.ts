@@ -51,15 +51,15 @@ class GameContainer extends Component {
   }
 
   setEvent() {
-    this.addEvent('click', '.js-btn-start', () => {
-      this.getWords();
+    this.addEvent('click', '.js-btn-start', async () => {
+      await this.getWords();
     });
     this.addEvent('click', '.js-btn-initial', () => {
       const { timerId } = this.state as IState;
       this.setState({ isStart: false });
       clearInterval(timerId);
     });
-    this.addEvent('submit', '.form-game', async (e: Event) => {
+    this.addEvent('submit', '.form-game', (e: Event) => {
       e.preventDefault();
       this.onSubmit();
     });
@@ -68,15 +68,16 @@ class GameContainer extends Component {
     });
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const again = sessionStorage.getItem('again');
     if (again) {
-      this.getWords();
+      await this.getWords();
       sessionStorage.removeItem('again');
     }
   }
 
   componentDidUpdate(state: IState, nextState: IState): void {
+    // console.log(state.round, state.second, nextState.round, nextState.second);
     if (nextState.round === nextState.words.length + 1) {
       this.gameEnd(nextState);
     } else if (state.round !== nextState.round) {
@@ -127,7 +128,7 @@ class GameContainer extends Component {
 
   countDown() {
     const { timer, timerId, round, score } = this.state as IState;
-    if (timer === 1) {
+    if (timer <= 1) {
       clearInterval(timerId);
       this.setState({ round: round + 1, score: score - 1 });
     } else {

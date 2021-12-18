@@ -5,11 +5,11 @@ const requestEndEvent = new CustomEvent('request-end');
 
 describe('add-loader', () => {
   it('toggle class after dispatch event', () => {
-    const $div = document.createElement('div');
-    addLoader($div);
+    const { body } = document;
+    addLoader(body);
     window.dispatchEvent(requestEvent);
-    expect($div.classList.contains('show')).toBeTruthy();
+    expect(body.classList.contains('show')).toBeTruthy();
     window.dispatchEvent(requestEndEvent);
-    expect($div.classList.contains('show')).not.toBeTruthy();
+    expect(body.classList.contains('show')).not.toBeTruthy();
   });
 });

@@ -3,14 +3,14 @@ import userEvent from '@testing-library/user-event';
 import Complete from '.';
 
 const renderComplex = () => {
-  const $div = document.createElement('div');
+  const { body } = document;
   sessionStorage.setItem('score', '1');
   sessionStorage.setItem('average', '2');
-  new Complete($div);
-  const complete = () => $div.querySelector('.complete');
-  const score = () => getByText($div, '1점');
-  const average = () => getByText($div, '2초');
-  const button = () => getByText($div, '다시 시작');
+  new Complete(body);
+  const complete = () => body.querySelector('.complete');
+  const score = () => getByText(body, '1점');
+  const average = () => getByText(body, '2초');
+  const button = () => getByText(body, '다시 시작');
   const onClick = () => {
     userEvent.click(button());
   };
@@ -18,9 +18,8 @@ const renderComplex = () => {
 };
 
 const renderSessionEmpty = () => {
-  const $div = document.createElement('div');
-  new Complete($div);
-  return $div;
+  const { body } = document;
+  new Complete(body);
 };
 
 beforeEach(() => {
@@ -30,10 +29,10 @@ beforeEach(() => {
 describe('complete', () => {
   it('should render default component', () => {
     const { complete, score, average, button } = renderComplex();
-    expect(score()).not.toBeNull();
-    expect(average()).not.toBeNull();
-    expect(button()).not.toBeNull();
-    expect(complete()).not.toBeNull();
+    expect(score()).toBeInTheDocument();
+    expect(average()).toBeInTheDocument();
+    expect(button()).toBeInTheDocument();
+    expect(complete()).toBeInTheDocument();
   });
 
   it('should prevent when session empty', () => {

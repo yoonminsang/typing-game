@@ -1,16 +1,16 @@
 import Loader from '.';
 
 const renderComplex = () => {
-  const $div = document.createElement('div');
-  new Loader($div);
-  const svg = () => $div.querySelector('svg');
+  const { body } = document;
+  new Loader(body);
+  const svg = () => body.querySelector('svg');
   return { svg };
 };
 
 describe('loader', () => {
   it('should render default component', () => {
     const { svg } = renderComplex();
-    expect(svg()).not.toBeNull();
+    expect(svg()).toBeInTheDocument();
   });
 
   it('snapshot', () => {

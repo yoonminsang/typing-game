@@ -6,14 +6,14 @@ const CONST = '버튼';
 
 const renderComplex = () => {
   const defaultButton = () => {
-    const $div = document.createElement('div');
-    new Button($div, { text: CONST });
-    return getByText($div, CONST);
+    const { body } = document;
+    new Button(body, { text: CONST });
+    return getByText(body, CONST);
   };
   const aButton = () => {
-    const $div = document.createElement('div');
-    new Button($div, { text: CONST, href: '/' });
-    return getByText($div, CONST);
+    const { body } = document;
+    new Button(body, { text: CONST, href: '/' });
+    return getByText(body, CONST);
   };
   return { defaultButton, aButton };
 };
@@ -21,8 +21,8 @@ const renderComplex = () => {
 describe('button', () => {
   it('should render default component', () => {
     const { defaultButton, aButton } = renderComplex();
-    expect(defaultButton()).not.toBeNull();
-    expect(aButton()).not.toBeNull();
+    expect(defaultButton()).toBeInTheDocument();
+    expect(aButton()).toBeInTheDocument();
   });
 
   it('snapshot', () => {
