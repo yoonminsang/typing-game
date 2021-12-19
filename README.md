@@ -62,3 +62,9 @@ if (curEl.nodeName === 'INPUT' && newAttr.name === 'value') {
 ### 테스트
 
 나는 프론트에서 제대로 테스트를 해본적이 없다. 백엔드에서 해보고 프론트에서 리액트를 사용해 간단한 예제나 사가 테스트를 다루어봤지만 모든 부분에 테스트를 시도한 것은 처음이였다. 다행히 테스트를 해봐서 기본 테스트는 문제가 크게 없었다. 하지만 axios, timer, 비동기처리, 내가 만든 컴포넌트로 테스트를 하는데 생각보다 시간이 걸렸다. 익숙하지 않아서 디버깅을 조금 많이 했다. 결국 모두 답을 찾았고 test coverage 100을 달성했다.
+
+## 결과물
+
+![image](https://user-images.githubusercontent.com/57904979/146682036-30c10938-90ad-4599-9ebb-62ac199e9cbc.png)
+
+![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/57904979/146682141-ab837e3a-e9f0-4ba0-9e58-a6ce6323a999.gif)
