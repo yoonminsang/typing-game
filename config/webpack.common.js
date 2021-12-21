@@ -53,6 +53,8 @@ module.exports = {
       template: './src/index.html',
       // favicon: './src/favicon.png',
     }),
-    new CompressionPlugin(),
+    new CompressionPlugin({
+      threshold: 10240, // 10kb
+    }),
   ],
 };
