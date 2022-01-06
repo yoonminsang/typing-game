@@ -7,18 +7,17 @@ const getPathname = () => {
 const getQuery = () => {
   const { search } = window.location;
   const queries = new URLSearchParams(search);
-  const params: TParams = {};
+  const query: TParams = {};
   queries.forEach((value, key) => {
-    params[key] = value;
+    query[key] = value;
   });
-  return params;
+  return query;
 };
 
 const pathValidation = (currentPath: string[], routePath: string[]) => {
   if (currentPath.length !== routePath.length) return false;
   const params: TParams = {};
-  let index = 0;
-  for (index = 0; index < currentPath.length; index++) {
+  for (let index = 0; index < currentPath.length; index++) {
     if (/^:/.test(routePath[index])) {
       params[routePath[index].slice(1)] = currentPath[index];
       continue;

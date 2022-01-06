@@ -22,7 +22,7 @@ abstract class Component {
 
   private render() {
     this.target.innerHTML = this.markup();
-    if (this.props?.class) {
+    if (this.props.class) {
       this.addClass();
     }
     this.appendComponent(this.target);
@@ -44,7 +44,7 @@ abstract class Component {
 
   private changeInside() {
     const temp = this.target.firstElementChild as HTMLElement;
-    this.target.replaceWith(...this.target.childNodes);
+    this.target.replaceWith(temp);
     this.target = temp;
   }
 

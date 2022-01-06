@@ -9,9 +9,7 @@ class RouterContext {
       pathname: getPathname(),
       query: getQuery(),
       params: {},
-      push: (url) => {
-        window.history.pushState(null, '', url);
-      },
+      push: () => {},
       goBack: () => {},
     };
   }

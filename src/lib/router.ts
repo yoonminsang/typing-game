@@ -27,7 +27,7 @@ class Router {
   }
 
   private route() {
-    const currentPath = this.routerContext.state.pathname.slice(1).split('/');
+    const currentPath = getPathname().slice(1).split('/');
     for (let i = 0; i < this.routes.length; i++) {
       const routePath = this.routes[i].path.slice(1).split('/');
       const params = pathValidation(currentPath, routePath);
