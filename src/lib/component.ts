@@ -84,7 +84,9 @@ abstract class Component {
       elements count가 다른 경우에 newDom으로 전체를 렌더링(renderNewDom)
     */
     const newDom = this.getNewDom();
-    if (!newDom.firstElementChild) return;
+    if (!newDom.firstElementChild) {
+      console.error('markup needs at least one element');
+    }
     const newElements = this.getNewElements(newDom);
 
     const currentElements = [...this.target.querySelectorAll('*')];
