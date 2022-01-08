@@ -122,7 +122,6 @@ abstract class Component {
   }
 
   renderNewDom(newDom: DocumentFragment) {
-    // elements count가 다른 경우에 newDom으로 전체를 렌더링
     this.target.innerHTML = this.inside
       ? [...newDom.firstElementChild!.children].map((el) => el.outerHTML).join('')
       : newDom.firstElementChild!.outerHTML;
