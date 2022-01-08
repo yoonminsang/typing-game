@@ -1,15 +1,15 @@
 import Router from './lib/router';
+import { IRoute } from './lib/types';
 import CompletePage from './pages/complete-page';
 import GamePage from './pages/game-page';
 import NotFoundPage from './pages/not-found-page';
-import { IRoute } from './types/route';
 import { addLoader } from './utils/loader';
 
 class App {
   target: HTMLElement;
   loaderTarget: HTMLElement;
   routes: IRoute[];
-  NotFoundPage: any;
+  NotFoundPage: typeof NotFoundPage;
 
   constructor(target: HTMLElement, loaderTarget: HTMLElement) {
     this.target = target;

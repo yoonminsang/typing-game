@@ -1,14 +1,14 @@
-import { IRoute } from '@/types/route';
 import routerContext, { RouterContext } from './router-context';
+import { ClassContructor, IRoute } from './types';
 import { getPathname, getQuery, pathValidation } from './utils';
 
 class Router {
   target: HTMLElement;
   routes: IRoute[];
-  NotFoundPage: any;
+  NotFoundPage: ClassContructor;
   routerContext: RouterContext;
 
-  constructor(target: HTMLElement, routes: IRoute[], NotFoundPage: any) {
+  constructor(target: HTMLElement, routes: IRoute[], NotFoundPage: ClassContructor) {
     this.target = target;
     this.routes = routes;
     this.NotFoundPage = NotFoundPage;
