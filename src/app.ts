@@ -1,5 +1,5 @@
 import Router from './lib/router';
-import { IRoute } from './lib/types';
+import { ClassContructor, IRoute } from './lib/types';
 import CompletePage from './pages/complete-page';
 import GamePage from './pages/game-page';
 import NotFoundPage from './pages/not-found-page';
@@ -9,7 +9,7 @@ class App {
   target: HTMLElement;
   loaderTarget: HTMLElement;
   routes: IRoute[];
-  NotFoundPage: typeof NotFoundPage;
+  NotFoundPage: ClassContructor;
 
   constructor(target: HTMLElement, loaderTarget: HTMLElement) {
     this.target = target;
