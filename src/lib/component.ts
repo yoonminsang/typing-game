@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { IRouterState, TState } from './types';
@@ -78,68 +79,84 @@ abstract class Component {
   }
 
   private update() {
-    const newMarkup = this.markup();
-
-    const newDom = document.createRange().createContextualFragment(newMarkup);
-
-    this.appendComponent(newDom);
-
+    /*
+      이전 dom과 새로운 dom을 비교해서 text, attributes를 업데이트
+      elements count가 다른 경우에 newDom으로 전체를 렌더링(renderNewDom)
+    */
+    const newDom = this.getNewDom();
     if (!newDom.firstElementChild) return;
-    const newElements = this.inside
-      ? [...newDom.firstElementChild.querySelectorAll('*')]
-      : [...newDom.querySelectorAll('*')];
+    const newElements = this.getNewElements(newDom);
+
     const currentElements = [...this.target.querySelectorAll('*')];
 
     if (newElements.length !== currentElements.length) {
-      this.target.innerHTML = this.inside
-        ? [...newDom.firstElementChild.children].map((el) => el.outerHTML).join('')
-        : newDom.firstElementChild.outerHTML;
+      this.renderNewDom(newDom);
       return;
     }
 
     for (let i = 0; i < newElements.length; i++) {
-      const newEl = newElements[i];
-      const curEl = currentElements[i];
+      const [newEl, curEl] = [newElements[i], currentElements[i]];
       if (newEl.childElementCount !== curEl.childElementCount) {
-        this.target.innerHTML = this.inside
-          ? [...newDom.firstElementChild.children].map((el) => el.outerHTML).join('')
-          : newDom.firstElementChild.outerHTML;
+        this.renderNewDom(newDom);
         return;
       }
       if (!newEl.isEqualNode(curEl)) {
-        if (newEl.tagName !== curEl.tagName) {
-          curEl.replaceWith(newEl);
-        } else {
-          if (curEl.firstChild?.nodeName === '#text' && newEl.firstChild?.nodeName === '#text') {
-            if (curEl.firstChild.nodeValue !== newEl.firstChild.nodeValue) {
-              curEl.firstChild.nodeValue = newEl.firstChild.nodeValue;
-            }
-          } else if (curEl.firstChild?.nodeName === '#text') {
-            curEl.removeChild(curEl.firstChild);
-          } else if (newEl.firstChild?.nodeName === '#text') {
-            const text = document.createTextNode(newEl.firstChild.nodeValue as string);
-            curEl.appendChild(text);
-          }
-
-          const curAttributes = curEl.attributes;
-          const newAttributes = newEl.attributes;
-
-          [...curAttributes].forEach((curAttr) => {
-            if (!newAttributes.getNamedItem(curAttr.name)) curEl.removeAttribute(curAttr.name);
-          });
-
-          [...newAttributes].forEach((newAttr) => {
-            const currentAttribute = curAttributes.getNamedItem(newAttr.name);
-            if (!currentAttribute || currentAttribute.value !== newAttr.value) {
-              curEl.setAttribute(newAttr.name, newAttr.value);
-              if (curEl.nodeName === 'INPUT' && newAttr.name === 'value') {
-                (curEl as HTMLInputElement).value = newAttr.value;
-              }
-            }
-          });
-        }
+        this.changeText(curEl, newEl);
+        this.changeAttributes(curEl, newEl);
       }
     }
+  }
+
+  getNewDom() {
+    const newMarkup = this.markup();
+    const newDom = document.createRange().createContextualFragment(newMarkup);
+    this.appendComponent(newDom);
+    return newDom;
+  }
+
+  getNewElements(newDom: DocumentFragment) {
+    const newElements = this.inside
+      ? [...newDom.firstElementChild!.querySelectorAll('*')]
+      : [...newDom.querySelectorAll('*')];
+    return newElements;
+  }
+
+  renderNewDom(newDom: DocumentFragment) {
+    // elements count가 다른 경우에 newDom으로 전체를 렌더링
+    this.target.innerHTML = this.inside
+      ? [...newDom.firstElementChild!.children].map((el) => el.outerHTML).join('')
+      : newDom.firstElementChild!.outerHTML;
+  }
+
+  changeText(curEl: Element, newEl: Element) {
+    if (curEl.firstChild?.nodeName === '#text' && newEl.firstChild?.nodeName === '#text') {
+      if (curEl.firstChild.nodeValue !== newEl.firstChild?.nodeValue) {
+        curEl.firstChild.nodeValue = newEl.firstChild?.nodeValue;
+      }
+    } else if (curEl.firstChild?.nodeName === '#text') {
+      curEl.removeChild(curEl.firstChild);
+    } else if (newEl.firstChild?.nodeName === '#text') {
+      const text = document.createTextNode(newEl.firstChild?.nodeValue as string);
+      curEl.appendChild(text);
+    }
+  }
+
+  changeAttributes(curEl: Element, newEl: Element) {
+    const curAttributes = curEl.attributes;
+    const newAttributes = newEl.attributes;
+    [...curAttributes].forEach((curAttr) => {
+      if (!newAttributes.getNamedItem(curAttr.name)) curEl.removeAttribute(curAttr.name);
+    });
+
+    [...newAttributes].forEach((newAttr) => {
+      const currentAttribute = curAttributes.getNamedItem(newAttr.name);
+      if (!currentAttribute || currentAttribute.value !== newAttr.value) {
+        curEl.setAttribute(newAttr.name, newAttr.value);
+        if (newAttr.name === 'value') {
+          (curEl as HTMLInputElement).value = newAttr.value;
+        }
+      }
+    });
   }
 }
 
